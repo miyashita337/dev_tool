@@ -1,0 +1,35 @@
+[core]
+	autocrlf = input
+[user]
+    name = Harie Shokunin
+    email = proce55ingpurser@gmail.com
+[core]
+	precomposeunicode = true
+
+[color]
+        ui = auto
+        autocrlf = input
+        editor = vim
+
+[alias]
+    br = branch
+    co = checkout
+    ci = commit
+    st = status
+    ll = log --graph --all
+    ls = log --graph --all --color --pretty=format:'%Cgreen%h %cd %Cred%cn %Creset%s %Cred%d'
+        conflicts = !git ls-files -u | cut -f 2 | sort -u
+
+[push]
+        default = matching
+[difftool "sourcetree"]
+        cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+        path =
+
+[branch]
+        autosetuprebase = always
+[merge]
+	ff = false
+[pull]
+	ff = only
+

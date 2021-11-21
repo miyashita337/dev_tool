@@ -1,0 +1,27 @@
+
+Host cb
+    HostName        cb.harie.net
+    ServerAliveInterval 15 
+    IdentityFile    ~/.ssh/id_rsa
+    User            harie
+    LocalForward 20023 localhost:22
+    #LocalForward 10022 localhost:22
+    #RemoteForward 32470 localhost:32470
+    ProxyCommand ssh login.bastion-dev.net -l harieshokunin -i ~/.ssh/id_rsa -W %h:%p
+    ForwardAgent yes
+
+Host *.dev-local-dev.net
+    ServerAliveInterval 15
+    ServerAliveCountMax 5
+    LocalForward 20022 localhost:22
+    # phpStormのxDebugポートフォワード
+    RemoteForward 9000 localhost:9000
+    ProxyCommand ssh login.bastion-dev.net↲ -l harieshokunin -i ~/.ssh/id_rsa -W %h:%p
+    ForwardAgent yes
+
+Host login_bs
+    Hostname login.bastion-dev.net
+    ServerAliveInterval 15 
+    IdentityFile    ~/.ssh/id_rsa
+    User            
+

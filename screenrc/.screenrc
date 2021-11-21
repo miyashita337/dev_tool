@@ -1,0 +1,27 @@
+escape ^Tt
+defencoding eucjp
+#hardstatus alwayslastline "[%02c] %`%-w%{=b bw}%n %t%{-}%+w"
+hardstatus alwayslastline "%{= wg} %-w%{=bu dr}%n %t%{-}%+w %= %{=b kw} %Y/%m/%d %0c"
+
+#caption always "%{= wk} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wb}%y/%m/%d(%D) %{=b wb}%c"
+#画面下部に起動ウィンドウ名を出す
+shelltitle "$ |cb"
+#起動時にでるメッセージを表示させない
+startup_message off
+sorendition "+rb .G"
+#vbell off
+
+termcapinfo xterm-color 'hs:ts=\E]0;:fs=\007:ds=\E]0;screen\007'
+termcapinfo xterm-color ti@:te@
+
+defscrollback 102400
+
+# logging
+log on
+deflog on
+logfile "/user/harie/screen_log/screen-%Y%m%d-%n.log"
+
+hardstatus off
+hardstatus alwayslastline
+hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][%{B}%Y-%m-%d %{W}%c:%s %{g}]'
+
