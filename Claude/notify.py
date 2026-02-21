@@ -45,17 +45,41 @@ def get_project_title(cwd: str) -> str:
     return Path(cwd).name or "Claude Code"
 
 
-def find_latest_transcript() -> str:
-    """~/.claude/sessions/ から最新のtranscriptファイルを探す"""
-    sessions_dir = Path.home() / ".claude" / "sessions"
-    if not sessions_dir.exists():
+def cwd_to_project_folder(cwd: str) -> str:
+    """cwdを ~/.claude/projects/ 以下のフォルダ名に変換する
+    例: /Users/foo/proj/.claude/worktrees/bar → -Users-foo-proj--claude-worktrees-bar
+    ルール: / と _ と . をすべて - に変換する
+    """
+    return cwd.replace("/", "-").replace("_", "-").replace(".", "-")
+
+
+def find_latest_transcript(cwd: str) -> str:
+    """cwd に対応する ~/.claude/projects/<folder>/ から最新のtranscriptを探す"""
+    projects_dir = Path.home() / ".claude" / "projects"
+    if not projects_dir.exists():
         return ""
-    files = sorted(
-        sessions_dir.glob("*.jsonl"),
-        key=lambda f: f.stat().st_mtime,
-        reverse=True
-    )
-    return str(files[0]) if files else ""
+
+    # cwd からプロジェクトフォルダ名を生成して完全一致を試みる
+    folder_name = cwd_to_project_folder(cwd)
+    project_dir = projects_dir / folder_name
+
+    # 完全一致しない場合は前方一致で最も近いフォルダを探す
+    if not project_dir.exists():
+        candidates = [d for d in projects_dir.iterdir()
+                      if d.is_dir() and folder_name.startswith(d.name[:20])]
+        if candidates:
+            project_dir = max(candidates, key=lambda d: len(d.name))
+
+    # プロジェクトフォルダ直下の *.jsonl のみ（subagents は除外）
+    if project_dir.exists():
+        files = sorted(
+            [f for f in project_dir.glob("*.jsonl") if f.parent == project_dir],
+            key=lambda f: f.stat().st_mtime,
+            reverse=True
+        )
+        return str(files[0]) if files else ""
+
+    return ""
 
 
 def read_transcript(transcript_path: str, max_chars: int = 1500) -> str:
@@ -185,8 +209,9 @@ def main():
 
     if api_key:
         try:
-            transcript_path = find_latest_transcript()
+            transcript_path = find_latest_transcript(cwd)
             transcript = read_transcript(transcript_path)
+            log(f"transcript: {transcript_path}, chars={len(transcript)}")
             notification = call_haiku(api_key, project_title, transcript)
             log(f"Haiku result: {notification}")
         except Exception as e:
