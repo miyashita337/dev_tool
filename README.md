@@ -43,10 +43,14 @@ make test
 ### Keychain への登録（初回のみ）
 
 ```bash
-security add-generic-password \
-  -a "$USER" \
-  -s "anthropic-api-key" \
-  -w "sk-ant-xxxx"   # 実際のキーを入力
+security add-generic-password -a "$USER" -s "anthropic-api-key" -w
+# → パスワード入力プロンプトが表示される（シェル履歴・画面に残らない）
+```
+
+更新する場合は `-U` を追加：
+
+```bash
+security add-generic-password -U -a "$USER" -s "anthropic-api-key" -w
 ```
 
 ### スクリプトからの読み取り
