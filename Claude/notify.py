@@ -48,9 +48,10 @@ def get_project_title(cwd: str) -> str:
 def cwd_to_project_folder(cwd: str) -> str:
     """cwdを ~/.claude/projects/ 以下のフォルダ名に変換する
     例: /Users/foo/proj/.claude/worktrees/bar → -Users-foo-proj--claude-worktrees-bar
-    ルール: / と _ と . をすべて - に変換する
+    ルール: 英数字とハイフン以外をすべて - に変換する（スペース・~・_・.・/ 等）
     """
-    return cwd.replace("/", "-").replace("_", "-").replace(".", "-")
+    import re
+    return re.sub(r"[^a-zA-Z0-9-]", "-", cwd)
 
 
 def find_latest_transcript(cwd: str) -> str:
