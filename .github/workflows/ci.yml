@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shellcheck
+        run: |
+          sudo apt-get install -y shellcheck
+          find . -name "*.sh" -not -path "./.git/*" -exec shellcheck --severity=warning {} + || true
+      - name: Vint (Vim linter)
+        run: |
+          pip install vim-vint
+          find . -name "*.vim" -o -name ".vimrc" | xargs vint || true
