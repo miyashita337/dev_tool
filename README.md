@@ -1,6 +1,9 @@
 # dev_tool
 Environment for using the terminal
 
+[![CI](https://github.com/miyashita337/dev_tool/actions/workflows/ci.yml/badge.svg)](https://github.com/miyashita337/dev_tool/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/miyashita337/dev_tool/branch/main/graph/badge.svg)](https://codecov.io/gh/miyashita337/dev_tool)
+
 ## Claude/
 
 Claude Code 関連ツール集。
@@ -25,7 +28,9 @@ make install   # ~/.claude/notify.sh にコピー
 **テスト**
 
 ```bash
-make test
+make test         # 通知の手動確認 (terminal-notifier 経由)
+make test-unit    # pytest によるユニットテスト
+make coverage     # カバレッジ計測 (XML 出力 → CI で Codecov に送信)
 ```
 
 ---

@@ -1,4 +1,4 @@
-.PHONY: install check test
+.PHONY: install check test test-unit coverage
 
 # ~/.claude/ に notify.sh と notify.py をインストール
 install: check
@@ -19,8 +19,19 @@ check:
 		(echo "Error: python3 が見つかりません。" && exit 1)
 	@echo "OK: terminal-notifier and python3 found."
 
-# 動作テスト
+# 動作テスト (terminal-notifier 経由の手動確認)
 test:
 	@echo "Testing notification ..."
 	@echo '{"cwd": "$(CURDIR)", "notification_type": "stop"}' | bash ~/.claude/notify.sh
 	@echo "Test done."
+
+# pytest によるユニットテスト
+test-unit:
+	@python3 -m pytest tests/ -q
+
+# カバレッジ計測 (XML 出力は CI で codecov に送る)
+coverage:
+	@python3 -m pytest tests/ \
+		--cov=notify \
+		--cov-report=xml \
+		--cov-report=term-missing
