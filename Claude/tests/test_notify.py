@@ -261,7 +261,6 @@ class TestFindLatestTranscript:
         old.write_text("{}\n", encoding="utf-8")
         new.write_text("{}\n", encoding="utf-8")
         # mtime を確実に差を付ける
-        import os
 
         os.utime(old, (1_000_000, 1_000_000))
         os.utime(new, (2_000_000, 2_000_000))
