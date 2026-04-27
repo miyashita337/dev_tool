@@ -6,16 +6,60 @@ on:
   pull_request:
     branches: [main, master]
 
+permissions:
+  contents: read
+
 jobs:
   lint:
+    name: shellcheck + vint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Shellcheck
         run: |
           sudo apt-get install -y shellcheck
-          find . -name "*.sh" -not -path "./.git/*" -exec shellcheck --severity=warning {} + || true
+          # SC1090/SC1091: dynamic source 警告は dotfiles では不可避なので除外
+          # SC2154: trap 内の $rc は ERR トラップで動的に設定される（false positive）
+          find . -name "*.sh" -not -path "./.git/*" \
+            -exec shellcheck --severity=warning -e SC1090 -e SC1091 -e SC2154 {} + || true
       - name: Vint (Vim linter)
         run: |
           pip install vim-vint
           find . -name "*.vim" -o -name ".vimrc" | xargs vint || true
+
+  python-tests:
+    name: Python tests + coverage (Claude/notify.py)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Claude
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov
+
+      - name: Run pytest with coverage
+        run: |
+          pytest tests/ \
+            --cov=notify \
+            --cov-report=xml \
+            --cov-report=term-missing
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: Claude/coverage.xml
+          flags: python
+          name: dev_tool-python
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

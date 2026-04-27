@@ -1,0 +1,38 @@
+codecov:
+  require_ci_to_pass: true
+  notify:
+    wait_for_ci: true
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 5%
+        if_no_uploads: success
+        if_not_found: success
+    patch:
+      default:
+        target: auto
+        threshold: 10%
+        if_no_uploads: success
+
+  range: "50...80"
+  precision: 1
+  round: down
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: true
+
+ignore:
+  - "tests/**"
+  - "**/conftest.py"
+  - "Windows/**"
+  - "ssh_config/**"
+  - ".vimrc"
+  - ".bashrc"
+  - ".zshrc"
+  - ".gitconfig"
+  - ".screenrc"
