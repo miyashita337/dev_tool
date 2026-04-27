@@ -13,7 +13,7 @@ coverage:
         if_not_found: success
     patch:
       default:
-        target: 70%
+        target: auto
         threshold: 10%
         if_no_uploads: success
 
